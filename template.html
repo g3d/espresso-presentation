@@ -1,0 +1,710 @@
+<!--
+Google IO 2012 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Espresso Framework</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/lviv_rug_logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>Наскільки швидкий?</h2>
+      <h3>Давайте перевіримо</h3>
+    </hgroup>
+    <article>
+      <p>Кілька уточнень щодо методів оцінки:</p>
+      <ul class="build">
+        <li>З точки зору продуктивності, єдиною справді важливою річчю для фреймворку є мінімізація часу на реакцію (overhead)</li>
+        <li>Час на реакцію (overhead) — час, спожитий фреймворком для того щоб отримати запит, обробити його та відповісти на нього</li>
+      </ul>
+      <p>Проведені тести дозволять нам отримати час на реакцію кожного з фреймворків</p>
+      <ul class="build">
+        <li>Час на реакцію є відношенням стандартної швидкості фреймворку до 1000 мілісекунд</li>
+        <li>Стандартна швидкість фреймворку — швидкість HelloWorld додатку, написаному з використанням цього фреймворку</li>
+        <li>Сама по собі стандартна швидкість фрейморку нічого не означає і використовується для обчисленея overhead’у.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>hardware & environment</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Тести запускалися на машині з наступною конфігурацією: 
+          <ul>
+            <li>Processor Name: Intel Core i5</li>
+            <li>Processor Speed:  3.31 GHz</li>
+            <li>Number of Processors: 1</li>
+            <li>Total Number of Cores:  4</li>
+            <li>L2 Cache (per Core):  256 KB</li>
+            <li>L3 Cache: 6 MB</li>
+            <li>Memory: 8 GB</li>
+          </ul>
+        </li>
+        <li>Тести запускалися на веб-сервері Thin</li>
+        <li>Тести повертають тривільний "Hello World!"</li>
+      </ul>
+      <pre class="prettyprint" data-lang="bash">
+#Ви можете запустити тести самостійно наступним чином:
+$ git clone git://github.com/slivu/espresso.git && cd espresso && rake overhead
+      </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>$ rake overhead</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/overhead.png" alt="rake overhead" title="rake overhead">
+      
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Стандартна швидкість фреймворків</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/fss.png" alt="Description" title="Description">
+      <footer class="source">Самі по собі ці цифри нічого не важать. Ми використовуємо їх для обрахунку часу на реакцію (overhead).</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Час на реакцію (overhead)</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/overhead_chart.png" alt="Description" title="Description">
+      <footer class="source">* Мілісекунд витрачено на запит.</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Трохи обрахунків</h2>
+    </hgroup>
+    <article>
+      <p>Обчисливши overhead кожного фреймворку, можемо визначити <span class="blue3">ars</span> (apps regular speed)</p>
+      <p>Формула проста:<br/>
+        <span class="green3">1000</span> / (time taken by <span class="blue3">action</span> + time taken by <span class="red3">framework</span>) </p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>ARS: actions takes <span class="red3">1ms</span> to run</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/ars_1.png" alt="Description" title="Description">
+      <footer class="source"><span class="blue3">Espresso</span>: 1000 / (1 + 0.17) = 853 | <span class="yellow3">Sinatra</span>: 1000 / (1 + 0.38) = 726 | <span class="red3">Rails</span>: 1000 / (1 + 13.33) = 69</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>ARS: actions takes <span class="red3">10ms</span> to run</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/ars_10.png" alt="Description" title="Description">
+      <footer class="source"><span class="blue3">Espresso</span>: 1000 / (10 + 0.17) = 193 | <span class="yellow3">Sinatra</span>: 1000 / (10 + 0.38) = 185 | <span class="red3">Rails</span>: 1000 / (10 + 13.33) = 54</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>ARS: actions takes <span class="red3">100ms</span> to run</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="images/ars_100.png" alt="Description" title="Description">
+      <footer class="source"><span class="blue3">Espresso</span>: 1000 / (100 + 0.17) = 9 | <span class="yellow3">Sinatra</span>: 1000 / (100 + 0.38) = 9 | <span class="red3">Rails</span>: 1000 / (100 + 13.33) = 8</footer>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Фреймворк має значення</h2>
+      <h3>Тільки коли ваш код має достатню швидкодію</h3>
+    </hgroup>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Espresso is fast if my code is fast</li>
+        </ul>
+        <p><b>What about it </b></p>
+        <ul>
+          <li>Easy to Use<li>
+          <li>Flexibility<li>
+          <li>Powerful<li>
+        </ul>
+
+      </section>
+    </aside>
+  </slide>
+
+  <slide class="segue dark quote nobackground">
+    <aside class="gdbar right bottom"><img src="images/google_developers_icon_128.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <q>
+        Simplicity is prerequisite for reliability.
+      </q>
+      <div class="author">
+        Edsger W. Dijkstra
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Actions — звичайні <span class="red3">Ruby</span> методи</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+def aticle
+  #даний код забезпечить роботу URL /article
+end
+</pre>
+<pre class="prettyprint" data-lang="ruby">
+def article id
+  #даний код забезпечить роботу URL /article/anything
+end
+</pre>
+<pre class="prettyprint" data-lang="ruby">
+def article id = 0
+  #даний код забезпечить роботу URL’ів /article/anything та <span class="blue3">/article</span>
+end
+</pre>
+<p>Очікувані аргументи доступні безпосередньо, як звичайні ruby аргументи.<br /> Для прикладу /article/100 HTTP request буде опрацьовано як article("100") ruby code</p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Controllers — звичайні <span class="red3">Ruby</span> класи</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class Pages < E
+  #даний код забезпечить роботу base URL /pages
+end
+Pages.run
+</pre>
+<pre class="prettyprint" data-lang="ruby">
+class News < E
+  map '/topnews'
+  #даний код забезпечить роботу base URL /topnews
+end
+News.run
+</pre>
+<pre class="prettyprint" data-lang="ruby">
+class Blog < E
+  map '/diary', '/blog'
+  #даний код забезпечить роботу  base URL’ів /diary та /blog
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Конфігуруєм кілька Controller’ів за раз</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+module Blog
+  class Posts < E #Posts використовуватиме Erubis з кодуванням utf-8
+    engine :Erubis
+    # ...
+  end
+  class Pages < E #Pages використовуватиме Haml з кодуванням utf-8
+    charset 'ISO-8859-1' #кодування тут перезаписано глобальними налаштуваннями
+    # ...
+  end
+end
+
+<b>app = Blog.mount do #всі контроллери всередині слайсу Blog матимуть задані налаштування
+  engine :Haml
+  layout :master
+  charset! 'UTF-8' #bang methods перезапишуть налаштування контроллера
+end</b>
+app.run
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Slices — звичайні <span class="red3">Ruby</span> модулі</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="ruby">
+module Blog
+  class Posts < E
+    # ...
+  end
+  class Pages < E
+    # ...
+  end
+end
+
+Blog.run #слайс Blog забезпечить роботу base URL`ів /posts & /pages
+      </pre>
+      <pre class="prettyprint" data-lang="ruby">
+module Todo
+  class Tasks < E
+    # ...
+  end
+  class Groups < E
+    # ...
+  end
+end
+
+Todo.mount('/todo').run #слайс Todo забезпечить роботу base URL`ів /todo/tasks & /todo/groups
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Routing & Mapping</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="ruby">
+module Blog
+  class Posts < E
+    map '/articles', :Statti
+    # ...
+  end
+end
+
+app.mount Blog, '/blog', '/diary'
+      </pre>
+      <p>Правила параметризації</p>
+      <pre>
+        "____"    => "."
+        "___"     => "-"
+        "__"      => "/"
+      </pre>
+      <pre class="prettyprint" data-lang="ruby">
+def users___online
+  # буде конвертовано в /users/online
+end
+      </pre>
+    </article>
+    <aside class="note">
+      <section>
+        <p><b>path_rule "_", "-" </b></p>
+        <p>alias</p>
+
+      </section>
+    </aside>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Портативність</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Слайси та Контроллери можуть переноситись між додатками </li>
+        <li>Готуємо <code>gem</code> із необхідним кодом, чи використовуємо <code>git</code> або <code>rsync</code> сервер</li>
+        <li>Просто монтуємо в різних додатках на різних серверах</li>
+      </ul>
+      <pre class="prettyprint" data-lang="ruby">
+app = App.new
+
+# монтуємо локальні контроллери
+app.mount App
+app.mount News, '/news'
+
+# монтуємо розподілені контроллери
+app.mount Pages, '/cms'
+app.mount Forum, '/forum' do
+  charset 'UTF-8'
+end
+app.run
+    </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+app = App.new
+
+# монтуємо розподілені контроллери
+app.mount Pages
+app.mount Forum
+app.run
+    </pre>
+
+    <pre class="prettyprint" data-lang="ruby">
+app = Forum.mount do
+  format :html
+end
+
+app.mount Admin, '/admin' do
+  auth do |u, p|
+    [u, p] == ['admin', '******']
+  end
+end
+app.run
+    </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Expressive Setup</h2>
+      <h3>Setup Action Globally</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class Api < E 
+
+  content_type :json
+  charset 'UTF-8'
+
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Expressive Setup</h2>
+      <h3>Setup Specific Actions | Regular Case</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class News < E 
+
+  engine :Haml
+
+  setup :archive, :pending do
+    engine :Erubis
+  end
+
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Expressive Setup</h2>
+      <h3>Setup Specific Actions | Regular Expression</h3>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="ruby">
+class Products < E 
+
+  layout :master
+
+  setup /red/ do
+    layout :red
+  end
+
+  def red_shirt
+    # ...
+  end
+
+  def red_shoes
+    # ...
+  end
+
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Digging Deeper</h2>
+      <h3>Format</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class App < E 
+  
+  map '/'
+
+  format :html, :xml
+
+  def pages
+    # ...
+  end
+  
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Digging Deeper</h2>
+      <h3>Specific Actions for Specific Formats</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class Pages < E 
+
+  format :html, :xml
+
+  setup 'read.xml' do
+    charset 'UTF-8'
+  end
+
+  def read
+    # ...
+  end
+  
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Digging Deeper</h2>
+      <h3>Specific Actions Globally for Specific Formats</h3>
+      
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class Pages < E 
+
+  engine :haml
+  format :html, :xml
+
+  setup '.xml' do
+    engine :Nokogiri
+  end
+  
+  # ...
+end
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>RESTful Actions</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="ruby">
+def book
+  # ...
+end
+
+def get_book
+  # ...
+end
+      </pre>
+      <pre class="prettyprint" data-lang="ruby">
+def post_book
+  # ...
+end
+      </pre>
+      <pre class="prettyprint" data-lang="ruby">
+def put_book
+  # ...
+end
+      </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>CRUD</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class App < E
+    map '/'
+
+    crudify SomeModel
+end
+      </pre>
+      <pre><b>Request                        Resource</b>
+GET     /id                    #get(id)
+POST    /   with POST data     #create(post_params)
+PUT     /id with POST data     #get(id).update(post_params)
+PATCH   /id with POST data     #get(id).update(post_params)
+DELETE  /id                    #get(id).delete OR #delete(id)
+HEAD    /id                    #get(id)
+OPTIONS /                      returns actions available to client
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Rewriter</h2>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="ruby">
+app = SomeController.mount
+app.rewrite /\A\/(.*)\.php\Z/ do |title|
+  redirect AnotherController.route(title)
+end
+app.run
+      
+app = SomeController.mount
+app.rewrite /\A\/latest\/(.*)\.html/ do |type|
+  pass AnotherController, :latest, :type => type
+end
+app.run
+     
+app = SomeController.mount
+app.rewrite /\A\/archived\/(.*)\.html/ do |title|
+  if page = Model::Page.first(:url => title)
+    halt page.content
+  else
+    halt 404, 'page not found'
+  end
+end
+app.run
+      </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Tests</h2>
+    </hgroup>
+    <article >
+      <pre class="prettyprint" data-lang="ruby">
+module SomeModule
+  class App < E
+    charset 'ISO-8859-1'
+
+  end
+
+  Spec.new App do
+    def is_of_charset response, charset
+      prove(response.header['Content-Type']) =~ %r[charset=#{Regexp.escape charset}]
+    end
+
+    get
+    check(last_response).is_of_charset 'ISO-8859-1'
+  end
+end
+      </pre>
+    </article>
+  </slide>
+
+  <slide>
+     <aside class="note">
+      <section>
+        <ul>
+          <li>Simply redirect</li>
+          <li>Execute SomeController#latest. no redirect</li>
+          <li>Halt by sending custom response (status, headers, body)</li>   
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Error Handling</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="ruby">
+class News < E
+    error 500 do |message|
+        "Fatal Error Occurred: #{ message }"
+    end
+
+    def index id
+      begin
+        # ризикований код тут
+      rescue => e
+        error 500, e.message
+        # поверне 500 status code 
+        # "Fatal Error Occurred: undefined local variable or method `here'"
+      end
+      # ...
+    end
+end
+      </pre>
+    </article>
+   
+  </slide>
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/google_developers_icon_128.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Запитання?&gt;</h2>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
